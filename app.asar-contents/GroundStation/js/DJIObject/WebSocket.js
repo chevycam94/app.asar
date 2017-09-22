@@ -8,8 +8,8 @@ var eventSeq = null;
 var eventValue = null;
 var eventResult = null;
 var eventErrmsg = null;
-var COMM_STANDBY  = 0,
-    COMM_SENDING  = 1,
+var COMM_STANDBY = 0,
+    COMM_SENDING = 1,
     COMM_FINISHED = 2;
 
 
@@ -22,70 +22,69 @@ function Communicator(socket) {
     this.status = COMM_STANDBY;
 
 
-    this.updateMissionList = function(waypoints){
+    this.updateMissionList = function(waypoints) {
         scope.waypointList = waypoints;
     };
 
-    this.socket.onmessage = function (event) {
+    this.socket.onmessage = function(event) {
         console.log(event.data);
         var msg = JSON.parse(event.data);
-        if (typeof (msg.SEQ) != 'undefined') {
+        if (typeof(msg.SEQ) != 'undefined') {
             eventSeq = msg.SEQ;
             eventResult = msg.ERROR;
             eventValue = msg.VALUE;
-            if (eventResult == "FAILURE"){
+            if (eventResult == "FAILURE") {
                 eventErrmsg = msg.ERROR_MESSAGE;
             }
-        }
-        else{
+        } else {
             //Event update
-            var state_string= "<div>"+
-                    "State Update" + "<br>";
+            var state_string = "<div>" +
+                "State Update" + "<br>";
 
             if (typeof(msg.MISSION_TYPE) != 'undefined')
-                state_string+=("CURR_STATE: " + msg.MISSION_TYPE+ "<br>");
+                state_string += ("CURR_STATE: " + msg.MISSION_TYPE + "<br>");
 
             if (typeof(msg.TARGET_WAYPOINT) != 'undefined')
-                state_string+=("TARGET_WAYPOINT: " + msg.TARGET_WAYPOINT+ "<br>");
+                state_string += ("TARGET_WAYPOINT: " + msg.TARGET_WAYPOINT + "<br>");
 
             if (typeof(msg.IS_BROKEN) != 'undefined')
-                state_string+=("IS_BROKEN: " + msg.IS_BROKEN+ "<br>");
+                state_string += ("IS_BROKEN: " + msg.IS_BROKEN + "<br>");
 
             if (typeof(msg.LAST_MISSION_TYPE) != 'undefined')
-                state_string+=( "LAST_MISSION_TYPE: " + msg.LAST_MISSION_TYPE + "<br>");
+                state_string += ("LAST_MISSION_TYPE: " + msg.LAST_MISSION_TYPE + "<br>");
 
             if (typeof(msg.CURR_STATE) != 'undefined')
-                state_string+=( "CURR_STATE: " + msg.CURR_STATE+ "<br>");
+                state_string += ("CURR_STATE: " + msg.CURR_STATE + "<br>");
 
             if (typeof(msg.ERROR_NOTIFICATION) != 'undefined')
-                state_string+=("ERROR_NOTIFICATION: " + msg.ERROR_NOTIFICATION + "<br>");
+                state_string += ("ERROR_NOTIFICATION: " + msg.ERROR_NOTIFICATION + "<br>");
 
             if (typeof(msg.REASON) != 'undefined')
-                state_string+=( "REASON: " + msg.REASON + "<br>");
+                state_string += ("REASON: " + msg.REASON + "<br>");
 
-            state_string+=("</div>");
+            state_string += ("</div>");
 
             //No update if nothing happened
             if (event_string != "<div>State Update<br></div>")
                 document.getElementById("state-update").innerHTML = state_string;
 
             //Event update
-            var event_string = "<div>"+
-                    "Event Update" + "<br>";
+            var event_string = "<div>" +
+                "Event Update" + "<br>";
 
             if (typeof(msg.INCIDENT_TYPE) != 'undefined')
-                event_string+=("INCIDENT_TYPE: " + msg.INCIDENT_TYPE+ "<br>");
+                event_string += ("INCIDENT_TYPE: " + msg.INCIDENT_TYPE + "<br>");
 
             if (typeof(msg.WAYPOINT_INDEX) != 'undefined')
-                event_string+=("WAYPOINT_INDEX: " + msg.WAYPOINT_INDEX+ "<br>");
+                event_string += ("WAYPOINT_INDEX: " + msg.WAYPOINT_INDEX + "<br>");
 
             if (typeof(msg.CURR_STATE) != 'undefined')
-                event_string+=("CURR_STATE: " + msg.CURR_STATE+ "<br>");
+                event_string += ("CURR_STATE: " + msg.CURR_STATE + "<br>");
 
             if (typeof(msg.REPEAT) != 'undefined')
-                event_string+=( "REPEAT: " + msg.REPEAT+ "<br>");
+                event_string += ("REPEAT: " + msg.REPEAT + "<br>");
 
-            event_string+=("</div>");
+            event_string += ("</div>");
 
             //No update if nothing happened
             if (event_string != "<div>Event Update<br></kd")
@@ -110,24 +109,22 @@ Communicator.prototype.checkDone = function(sequence) {
     0x10 --> still waiting
     0x11 --> reserve
      */
-    console.log (sequence + "," + eventSeq + "," + eventResult);
-    if((sequence == eventSeq) && (eventResult == "SUCCESS")) {
+    console.log(sequence + "," + eventSeq + "," + eventResult);
+    if ((sequence == eventSeq) && (eventResult == "SUCCESS")) {
         if (eventValue == null)
             //ACK
             return 0x00;
         else
             //cmd for get_xxx
             return eventValue;
-    }
-    else if ((sequence == eventSeq) && (eventResult != "SUCCESS")) {
+    } else if ((sequence == eventSeq) && (eventResult != "SUCCESS")) {
         //throw errors
         //or some other way
         var errmsg = eventResult + "," + eventErrmsg;
         scope.resetCheckParam();
         alert("Command Failed with Error: " + errmsg);
-        throw("Command Failed with Error: " + errmsg);
-    }
-    else
+        throw ("Command Failed with Error: " + errmsg);
+    } else
         return 0x10;
 };
 
@@ -139,11 +136,11 @@ Communicator.prototype.resetCheckParam = function() {
 };
 
 //Following code needs to be refactored for a more general purpose;
-Communicator.prototype.waitingACK= function(sequence) {
-    var scope= this;
+Communicator.prototype.waitingACK = function(sequence) {
+    var scope = this;
     setTimeout(
         function() {
-            if (scope.time > 100){
+            if (scope.time > 100) {
                 alert("timeout!, please try again!");
                 scope.time = 0;
                 return;
@@ -154,24 +151,19 @@ Communicator.prototype.waitingACK= function(sequence) {
                 console.log("Still Running");
                 scope.time++;
                 scope.waitingACK(sequence);
-            }
-            else if (doneFlag == 0x00) {
+            } else if (doneFlag == 0x00) {
                 alert("Command Success!");
                 scope.time = 0;
-            }
-
-            else{
+            } else {
                 scope.resetCheckParam();
-                switch(doneFlag) {
+                switch (doneFlag) {
 
-                    default:
-                        scope.time = 0;
-                        break;
+                    default: scope.time = 0;
+                    break;
                 }
 
             }
-        }
-    ,10);
+        }, 10);
 
 };
 
@@ -200,10 +192,10 @@ Communicator.prototype.stopNavigationMode = function() {
 
 };
 
-Communicator.prototype.uploadWayline= function() {
+Communicator.prototype.uploadWayline = function() {
     var scope = this;
 
-    if (scope.waypointList.length < 2){
+    if (scope.waypointList.length < 2) {
         alert("Please set 2 waypoints at least!");
         return;
     }
@@ -223,26 +215,23 @@ Communicator.prototype.uploadWayline= function() {
         var doneFlag = scope.checkDone(sequence);
         setTimeout(
             function() {
-                if (doneFlag == 0x10){
+                if (doneFlag == 0x10) {
                     console.log("Still Running");
                     waitWLUpload();
-                }
-                else if (doneFlag == 0x00){
+                } else if (doneFlag == 0x00) {
                     console.log("Success");
                     scope.uploadWaypoint(0);
-                }
-                else{
+                } else {
 
                 }
-            }
-        ,5);
+            }, 5);
     }
 
 
 };
 
-Communicator.prototype.downloadWayline= function() {
-    var sequence =  "downloadWL";
+Communicator.prototype.downloadWayline = function() {
+    var sequence = "downloadWL";
     var downloadWayLine = download_waypoint_mission_info;
 
     downloadWayLine.SEQ = sequence;
@@ -251,13 +240,13 @@ Communicator.prototype.downloadWayline= function() {
 };
 
 Communicator.prototype.uploadWaypoint = function(i) {
-    var scope= this;
+    var scope = this;
 
-    if(i >= scope.waypointList.length)
+    if (i >= scope.waypointList.length)
         return;
 
-    var sequence = "uploadWP"+i;
-    var waypoint = updateWPData(sequence,i,scope.waypointList[i].latitude*Math.PI/180,scope.waypointList[i].longitude*Math.PI/180,scope.waypointList[i].altitude);
+    var sequence = "uploadWP" + i;
+    var waypoint = updateWPData(sequence, i, scope.waypointList[i].latitude * Math.PI / 180, scope.waypointList[i].longitude * Math.PI / 180, scope.waypointList[i].altitude);
     this.socket.send(JSON.stringify(waypoint));
 
     waitWPUploadResult();
@@ -267,17 +256,16 @@ Communicator.prototype.uploadWaypoint = function(i) {
         var doneFlag = scope.checkDone(sequence);
         setTimeout(
             function() {
-                if (doneFlag == 0x10){
+                if (doneFlag == 0x10) {
                     console.log("Still Running");
                     waitWPUploadResult();
                 }
                 //The success will return successIndex, instead of 0x00 flag
-                else{
+                else {
                     console.log("Success");
-                    scope.uploadWaypoint(i+1);
+                    scope.uploadWaypoint(i + 1);
                 }
-            }
-        ,5);
+            }, 5);
     }
 
 };
@@ -351,7 +339,7 @@ Communicator.prototype.setWaylineIdleValue = function(idleValue) {
     var setIdleValue = set_waypoint_idle_vel;
 
     setIdleValue.SEQ = sequence;
-    setIdleValue.VALUE.IDLE_VEL= idleValue;
+    setIdleValue.VALUE.IDLE_VEL = idleValue;
 
     this.socket.send(JSON.stringify(setIdleValue));
     this.waitingACK(sequence);

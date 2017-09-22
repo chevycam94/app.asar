@@ -1,1 +1,3 @@
-.frame-upgrade:not(.upgrade-wrap) .param-box{margin:0}
+.frame-upgrade:not(.upgrade-wrap) .param-box {
+    margin: 0
+}

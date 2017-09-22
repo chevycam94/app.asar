@@ -2,7 +2,7 @@
  * Created by itolfo2 on 2015/10/23.
  */
 // Our Javascript will go here.
-String.prototype.format = function () {
+String.prototype.format = function() {
     var str = this;
     for (var i = 0; i < arguments.length; i++) {
         str = str.replace('{' + i + '}', arguments[i]);
@@ -37,6 +37,7 @@ var atti_view_div;
 
 var dynamicPoints = new Array();
 var dynamicPointMesh = new Array();
+
 function drawDynamicPath(p) {
     if (dynamicPoints == null || dynamicPointMesh == null)
         return;
@@ -72,13 +73,13 @@ function Aircraft() {
     this.transform = new THREE.Matrix4();
     this.rotationM = new THREE.Matrix4();
     this.position = new THREE.Vector3();
-    this.Reset = function () {
+    this.Reset = function() {
         this.transform.copy(this.transform_base);
     };
 
     var scope = this;
 
-    this.Update = function () {
+    this.Update = function() {
         if (scope.object == null)
             return;
         scope.object.scale.set(scope.scale, scope.scale, scope.scale);
@@ -86,27 +87,27 @@ function Aircraft() {
         scope.object.rotation.setFromRotationMatrix(scope.rotationM);
         scope.object.position.setFromMatrixPosition(scope.transform);
     };
-    this.SetCurrentAsInitial = function () {
+    this.SetCurrentAsInitial = function() {
         this.transform_base.copy(this.transform);
     };
-    this.SetScale = function (s) {
+    this.SetScale = function(s) {
         this.scale = s;
         this.Update();
     };
-    this.SetATTI = function (q) {
+    this.SetATTI = function(q) {
         var m = new THREE.Matrix4();
         m.makeRotationFromQuaternion(q);
         m.multiply(this.transform);
         this.transform.copy(m);
         this.Update();
     };
-    this.SetPosition = function (p) {
+    this.SetPosition = function(p) {
         this.position.copy(p);
         this.transform.setPosition(p);
         this.Update();
     };
 
-    this.Unload = function(){
+    this.Unload = function() {
         if (this.object != null) {
             scene.remove(this.object);
             this.object = null;
@@ -114,9 +115,9 @@ function Aircraft() {
     };
 }
 
-function load_sample(){
+function load_sample() {
     var loader = new THREE.ObjectLoader();
-    loader.load("data/t33.json", function (obj) {
+    loader.load("data/t33.json", function(obj) {
         aircraft.Unload();
         aircraft.object = obj;
         aircraft.SetScale(0.0175);
@@ -144,15 +145,15 @@ function createSky() {
     // We're inside the box, so make sure to render the backsides
     // It will typically be rendered first in the scene and without depth so anything else will be drawn in front
     var material = new THREE.ShaderMaterial({
-        fragmentShader : shader.fragmentShader,
-        vertexShader   : shader.vertexShader,
-        uniforms       : shader.uniforms,
-        depthWrite     : false,
-        side           : THREE.BackSide
+        fragmentShader: shader.fragmentShader,
+        vertexShader: shader.vertexShader,
+        uniforms: shader.uniforms,
+        depthWrite: false,
+        side: THREE.BackSide
     });
 
     // The box dimension size doesn't matter that much when the camera is in the center.  Experiment with the values.
-    var skyMesh = new THREE.Mesh( new THREE.CubeGeometry( 10000, 10000, 10000, 1, 1, 1 ), material );
+    var skyMesh = new THREE.Mesh(new THREE.CubeGeometry(10000, 10000, 10000, 1, 1, 1), material);
     skyMesh.renderDepth = -10;
 
 
@@ -161,7 +162,7 @@ function createSky() {
 
 function load_m100() {
     var loader = new THREE.OBJMTLLoader();
-    loader.load( 'data/m100_body.obj', 'data/m100_body.mtl', function ( object ) {
+    loader.load('data/m100_body.obj', 'data/m100_body.mtl', function(object) {
         aircraft.Unload();
         aircraft.object = object;
         aircraft.transform.makeRotationX(-Math.PI / 2);
@@ -171,7 +172,7 @@ function load_m100() {
         aircraft.SetScale(2);
         aircraft.SetCurrentAsInitial();
         aircraft.Update();
-        scene.add( object );
+        scene.add(object);
     });
 }
 
@@ -203,8 +204,8 @@ function init() {
 
     // Loading manager
     var manager = new THREE.LoadingManager();
-    manager.onProgress = function ( item, loaded, total ) {
-        console.log( item, loaded, total );
+    manager.onProgress = function(item, loaded, total) {
+        console.log(item, loaded, total);
     };
 
     // Create update object
@@ -212,7 +213,9 @@ function init() {
     createSky();
 
     // create renderer
-    renderer = new THREE.WebGLRenderer({antialias: true});
+    renderer = new THREE.WebGLRenderer({
+        antialias: true
+    });
     renderer.setClearColor(clearColor);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
@@ -236,25 +239,20 @@ function init() {
     scene.add(transformControl);
 
     // Hiding transform situation is a little in a mess :()
-    transformControl.addEventListener('change', function (e) {
-    });
+    transformControl.addEventListener('change', function(e) {});
 
-    transformControl.addEventListener('mouseDown', function (e) {
-    });
+    transformControl.addEventListener('mouseDown', function(e) {});
 
-    transformControl.addEventListener('mouseUp', function (e) {
-    });
+    transformControl.addEventListener('mouseUp', function(e) {});
 
-    transformControl.addEventListener('objectChange', function (e) {
-    });
+    transformControl.addEventListener('objectChange', function(e) {});
 
     var dragcontrols = new THREE.DragControls(camera, splineHelperObjects, renderer.domElement); //
-    dragcontrols.on('hoveron', function (e) {
+    dragcontrols.on('hoveron', function(e) {
         transformControl.attach(e.object);
     });
 
-    dragcontrols.on('hoveroff', function (e) {
-    });
+    dragcontrols.on('hoveroff', function(e) {});
 }
 
 function generateTexture() {
@@ -263,7 +261,8 @@ function generateTexture() {
     canvas.height = 256;
     var context = canvas.getContext('2d');
     var image = context.getImageData(0, 0, 256, 256);
-    var x = 0, y = 0;
+    var x = 0,
+        y = 0;
     for (var i = 0, j = 0, l = image.data.length; i < l; i += 4, j++) {
         x = j % 256;
         y = x == 0 ? y + 1 : y;
@@ -323,7 +322,7 @@ function updateSplineOutline() {
         splineMesh = spline.mesh;
         for (var i = 0; i < ARC_SEGMENTS; i++) {
             p = splineMesh.geometry.vertices[i];
-            p.copy(spline.getPoint(i / ( ARC_SEGMENTS - 1 )));
+            p.copy(spline.getPoint(i / (ARC_SEGMENTS - 1)));
         }
         splineMesh.geometry.verticesNeedUpdate = true;
     }
@@ -339,7 +338,7 @@ function exportSpline() {
 
     }
     console.log(strplace.join(',\n'));
-    var code = '[' + ( strplace.join(',\n\t') ) + ']';
+    var code = '[' + (strplace.join(',\n\t')) + ']';
     prompt('copy and paste code', code);
 }
 
@@ -398,7 +397,7 @@ function clearFlyPath() {
 var service_simulator = new DJIServiceSimulator();
 
 // set update scene data method
-service_simulator.on_sim_status = function (e) {
+service_simulator.on_sim_status = function(e) {
     //console.log(e);
     var q = new THREE.Quaternion();
     q.set(e.Quaternion1, -e.Quaternion3, e.Quaternion2, e.Quaternion0);
@@ -433,14 +432,14 @@ function simulator_device_arrival(e) { // handle for simulator device
 }
 
 function device_arrival(e) { // dispatch device arrival event
-    if (e["PRODUCT_TYPE"] == "Controller")simulator_device_arrival(e);
+    if (e["PRODUCT_TYPE"] == "Controller") simulator_device_arrival(e);
 }
 
 // create general service, this service will broadcast device arrival and remove event
 var service_general = new DJIServiceGeneral();
 
 // Connect, reg event for device arrival
-service_general.Connect(function (e) {
+service_general.Connect(function(e) {
     console.log(e);
     if (e["EVENT"] == "device_arrival") device_arrival(e);
 });
@@ -449,7 +448,7 @@ service_general.Connect(function (e) {
 function updateSimulatorVar(e) {
     var dom = document.getElementById("sim_status_val");
 
-    var m = function (index) {
+    var m = function(index) {
         return '<div>' + index + ' : ' + e[index] + '</div>';
     };
     var a = "";
@@ -461,7 +460,9 @@ function updateSimulatorVar(e) {
 
 function createATTIRenderer() {
     atti_view_div = document.getElementById("view_atti");
-    atti_renderer = new THREE.WebGLRenderer({antialias: true});
+    atti_renderer = new THREE.WebGLRenderer({
+        antialias: true
+    });
     atti_renderer.setClearColor(0xa0a0a0);
     atti_renderer.setSize(atti_view_div.clientWidth, atti_view_div.clientHeight);
     atti_view_div.appendChild(atti_renderer.domElement);
@@ -478,26 +479,26 @@ function createATTIRenderer() {
 
 var div_status = null;
 // function for Simulator control
-window.onload = function () {
+window.onload = function() {
     var btn_start = document.getElementById("sim-start");
-    btn_start.onclick = function () {
+    btn_start.onclick = function() {
         service_simulator.Start();
     };
 
     var btn_stop = document.getElementById("sim-stop");
-    btn_stop.onclick = function () {
+    btn_stop.onclick = function() {
         service_simulator.Stop();
         if (div_status != null)
             div_status.innerHTML = "Unknown";
     };
 
     var btn_clear = document.getElementById("clear-path");
-    btn_clear.onclick = function () {
+    btn_clear.onclick = function() {
         clearFlyPath();
     };
 
     var btn_find_aircraft = document.getElementById("find_aircraft");
-    btn_find_aircraft.onclick = function () {
+    btn_find_aircraft.onclick = function() {
         controls.target.copy(aircraft.position);
     };
 
@@ -506,7 +507,7 @@ window.onload = function () {
     init();
     createATTIRenderer();
     animate();
-    container.onkeydown = function (event) {
+    container.onkeydown = function(event) {
         if (event.keyCode == 32)
             controls.target.copy(aircraft.position);
     };

@@ -1,7 +1,6 @@
 /**
  * Created by Phoenix on 2015/12/29.
  */
-
 function Path(start, end) {
 
     var lineMaterial = new THREE.LineBasicMaterial({

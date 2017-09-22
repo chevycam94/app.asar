@@ -1,1 +1,9 @@
-.frame-upgrade:not(.upgrade-wrap) .param-box{margin:0}.remoteradio-runmode .pop-mask .pop-box{height:auto !important}.remoteradio-runmode .pop-mask .pop-box .pop-bd{text-align:center !important}
+.frame-upgrade:not(.upgrade-wrap) .param-box {
+    margin: 0
+}
+.remoteradio-runmode .pop-mask .pop-box {
+    height: auto !important
+}
+.remoteradio-runmode .pop-mask .pop-box .pop-bd {
+    text-align: center !important
+}

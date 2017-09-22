@@ -18,7 +18,7 @@ function ServiceIo() {
 
 // cmd object must have a callback function [on_reply] object
 // if no this function object, just log to console
-ServiceIo.prototype.Write = function (cmd) {
+ServiceIo.prototype.Write = function(cmd) {
     var seq = Math.random().toString(36).substring(7); // generate random seq string
     cmd.SEQ = seq; // insert command with seq
     this.cmd_history_[seq] = cmd; // save the send command
@@ -29,22 +29,22 @@ ServiceIo.prototype.Write = function (cmd) {
     }
 };
 
-ServiceIo.prototype.Connect = function (ws_url, on_ws_message, auto_retry, on_ws_failure, on_ws_success) {
+ServiceIo.prototype.Connect = function(ws_url, on_ws_message, auto_retry, on_ws_failure, on_ws_success) {
     if (ws_url == null)
         ws_url = "ws://localhost:19870/general";
     if (auto_retry == null) auto_retry = true;
     var self_ = this;
-    var do_connect = function () {
+    var do_connect = function() {
         var service_websocket = new WebSocket(ws_url);
 
-        service_websocket.onopen = function () {
+        service_websocket.onopen = function() {
             console.log("[" + ws_url + "] service connect ok!");
             self_.cur_ws = this;
             self_.cur_status = "link_ok";
             if (is_function(on_ws_success))
                 on_ws_success();
         };
-        service_websocket.onclose = function () {
+        service_websocket.onclose = function() {
             self_.cur_ws = null;
             console.log("[" + ws_url + "] service closed!");
             self_.cur_status = "service_failure";
@@ -53,11 +53,11 @@ ServiceIo.prototype.Connect = function (ws_url, on_ws_message, auto_retry, on_ws
             if (is_function(on_ws_failure))
                 on_ws_failure(); // notify no this type of service!
         };
-        service_websocket.onerror = function () {
+        service_websocket.onerror = function() {
             self_.cur_ws = null;
             console.log("[" + ws_url + "] service error!");
         };
-        service_websocket.onmessage = function (e) {
+        service_websocket.onmessage = function(e) {
             var msg = JSON.parse(e.data);
             if ("SEQ" in msg) { // text with seq
                 if (msg.SEQ in self_.cmd_history_) { // seq is send by self.Write
@@ -83,7 +83,7 @@ function DJIServiceGeneral() {
     this.servio = new ServiceIo();
 }
 
-DJIServiceGeneral.prototype.OnMessage = function (e, on_device_event) {
+DJIServiceGeneral.prototype.OnMessage = function(e, on_device_event) {
     var msg = JSON.parse(e.data);
 
     if ('FILE' in msg) {
@@ -95,9 +95,9 @@ DJIServiceGeneral.prototype.OnMessage = function (e, on_device_event) {
     }
 };
 
-DJIServiceGeneral.prototype.Connect = function (on_device_event) {
+DJIServiceGeneral.prototype.Connect = function(on_device_event) {
     var self_ = this;
-    this.servio.Connect("ws://localhost:19870/general", function (e) {
+    this.servio.Connect("ws://localhost:19870/general", function(e) {
         self_.OnMessage(e, on_device_event);
     });
 };
@@ -114,38 +114,37 @@ function DJIServiceSimulator() {
     this.sim_only_aircraft = 1;
 }
 
-DJIServiceSimulator.prototype.OnMessage = function (e) {
+DJIServiceSimulator.prototype.OnMessage = function(e) {
     var msg = JSON.parse(e.data);
     // check if sim status update
     if (msg["EVENT"] == "sim_state" && is_function(this.on_sim_status)) this.on_sim_status(msg);
     else console.log(msg);
 };
 
-DJIServiceSimulator.prototype.Connect = function (device) {
+DJIServiceSimulator.prototype.Connect = function(device) {
     var self = this;
     this.FILE = device["FILE"];
     this.servio.Connect("ws://localhost:19870/controller/simulator/" + this.FILE,
-        function (e) {
+        function(e) {
             self.OnMessage(e);
         },
         true,
-        function () {
-        },
-        function () {
+        function() {},
+        function() {
             self.OnConnected();
         }
     );
 };
 
-DJIServiceSimulator.prototype.OnConnected = function () {
+DJIServiceSimulator.prototype.OnConnected = function() {
     //this.Start(); // use default parameter
 };
 
-DJIServiceSimulator.prototype.Start = function (latitude, longitude, freq, only_aircraft) {
+DJIServiceSimulator.prototype.Start = function(latitude, longitude, freq, only_aircraft) {
     if (latitude != null) this.sim_latitude = latitude;
     if (longitude != null) this.sim_longitude = longitude;
     if (freq != null) this.sim_freq = freq;
-    if (only_aircraft != null)this.sim_only_aircraft = only_aircraft;
+    if (only_aircraft != null) this.sim_only_aircraft = only_aircraft;
 
     var cmd = {};
     cmd["CMD"] = "start_sim";
@@ -156,7 +155,7 @@ DJIServiceSimulator.prototype.Start = function (latitude, longitude, freq, only_
     this.servio.Write(cmd);
 };
 
-DJIServiceSimulator.prototype.Stop = function () {
+DJIServiceSimulator.prototype.Stop = function() {
     var cmd = {};
     cmd["CMD"] = "stop_sim";
     this.servio.Write(cmd);
