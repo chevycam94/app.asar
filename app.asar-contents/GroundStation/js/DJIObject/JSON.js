@@ -2,57 +2,59 @@
  * Created by Phoenix on 2016/1/4.
  * JSON object definition
  */
+
+
 //GoundStation related
 var set_navigation_mode = {
-    "SEQ": "null",
+    "SEQ":       "null",
     "OPERATION": "SetNavigationMode",
-    "VALUE": {
-        "NAVIGATION_MODE": 1 // 1: Enter    2: Exit
+    "VALUE":     {
+        "NAVIGATION_MODE":   1         // 1: Enter    2: Exit
     }
 };
 
 var upload_mission_info = {
-    "SEQ": "null",
-    "OPERATION": "UploadWayLineMission",
-    "VALUE": {
-        "LENGTH": 0, //# of points
-        "VEL_CMD_RANGE": 10, //velocity range from RC
-        "IDLE_VEL": 10,
+    "SEQ":  		"null",
+    "OPERATION": 	"UploadWayLineMission",
+    "VALUE": 	{
+        "LENGTH": 			0,//# of points
+        "VEL_CMD_RANGE": 	10,//velocity range from RC
+        "IDLE_VEL": 		10,
         "ACTION_ON_FINISH": 0,
         "MISSION_EXEC_NUM": 1, //Mission execute times
-        "YAW_MODE": 0,
-        "TRACE_MODE": 0,
+        "YAW_MODE": 		0,
+        "TRACE_MODE": 		0,
         "ACTION_ON_RC_LOST": 0,
         "GIMBAL_PITCH_MODE": 0,
-        "HP_LATI": 22.540091 * Math.PI / 180, //The home info should be set as the one in drone MCU
-        "HP_LONTI": 113.946593 * Math.PI / 180,
-        "HP_ALTI": 100
+        "HP_LATI": 			22.540091*Math.PI/180, //The home info should be set as the one in drone MCU
+        "HP_LONTI": 		113.946593*Math.PI/180,
+        "HP_ALTI": 			100
     }
 };
 
 var download_waypoint_mission_info = {
-    "SEQ": "null",
+    "SEQ":       "null",
     "OPERATION": "DownloadWayLineMission"
 };
 
 var upload_waypoint = {
-    "SEQ": "null",
+    "SEQ":       "null",
     "OPERATION": "UploadWayPoint",
-    "VALUE": {
-        "INDEX": 0,
-        "LATI": 0,
-        "LONTI": 0,
-        "ALTI": 120,
-        "DAMPING_DIS": 180,
-        "TGT_YAW": 30,
+    "VALUE":     {
+        "INDEX": 			0,
+        "LATI": 			0,
+        "LONTI":			0,
+        "ALTI": 			120,
+        "DAMPING_DIS": 		180,
+        "TGT_YAW": 			30,
         "TGT_GIMBAL_PITCH": -120,
-        "TURN_MODE": 0,
-        "HAS_ACTION": 0,
-        "ACTION_TIME_LIMIT": 50,
+        "TURN_MODE": 		0,
+        "HAS_ACTION":  		0,
+        "ACTION_TIME_LIMIT":50,
         "ACTION": {
-            "ACTION_NUM": 15,
-            "ACTION_RPT": 15,
-            "COMMAND_LIST": {
+            "ACTION_NUM": 	15,
+            "ACTION_RPT": 	15,
+            "COMMAND_LIST":	{
                 "WP_ACTION_STAY": 200,
                 "WP_ACTION_SIMPLE_SHOT": 1,
                 "WP_ACTION_VIDEO_START": 1,
@@ -67,39 +69,39 @@ var upload_waypoint = {
 };
 
 var download_waypoint = {
-    "SEQ": "null",
+    "SEQ":       "null",
     "OPERATION": "DownloadWayPoint",
-    "VALUE": {
+    "VALUE":{
         "INDEX": 2
     }
 };
 
 var startstop_waypoint_mission = {
-    "SEQ": "null",
+    "SEQ":       "null",
     "OPERATION": "StartOrCancelWayLineMission",
-    "VALUE": {
-        "GO_STOP": 0 // 0: go    1: stop
+    "VALUE":  {
+       "GO_STOP": 0    // 0: go    1: stop
     }
 };
 
 var pauseresume_waypoint_mission = {
-    "SEQ": "null",
+    "SEQ":       "null",
     "OPERATION": "PauseOrContinueWayLineMission",
-    "VALUE": {
-        "PAUSE": 0 // 0: pause    1: continue
+    "VALUE":  {
+      "PAUSE": 0    // 0: pause    1: continue
     }
 };
 
 var set_waypoint_idle_vel = {
-    "SEQ": "null",
+    "SEQ":       "null",
     "OPERATION": "SetWayLineFlightIdelValue",
-    "VALUE": {
+    "VALUE":  {
         "IDLE_VEL": 0
     }
 };
 
 var get_waypoint_idle_vel = {
-    "SEQ": "null",
+    "SEQ":       "null",
     "OPERATION": "GetWayLineFlightIdelValue",
 };
 
@@ -152,19 +154,19 @@ function updateWPData(seq, index, lati, longi, alti, damping_dis, tgt_yaw, tgt_g
     // need a evaluation for valid input parameters
     newWaypoint.SEQ = seq;
     newWaypoint.VALUE.INDEX = index;
-    newWaypoint.VALUE.LATI = lati * Math.PI / 180;
-    newWaypoint.VALUE.LONTI = longi * Math.PI / 180;
+    newWaypoint.VALUE.LATI = lati*Math.PI/180;
+    newWaypoint.VALUE.LONTI = longi*Math.PI/180;
     newWaypoint.VALUE.ALTI = alti;
 
     //null stands for defualt value
-    newWaypoint.VALUE.DAMPING_DIS = damping_dis == null ? upload_waypoint.VALUE.DAMPING_DIS : damping_dis;
-    newWaypoint.VALUE.TGT_YAW = tgt_yaw == null ? upload_waypoint.VALUE.TGT_YAW : tgt_yaw;
-    newWaypoint.VALUE.TGT_GIMBAL_PITCH = tgt_gimbal_pitch == null ? upload_waypoint.VALUE.TGT_GIMBAL_PITCH : tgt_gimbal_pitch;
-    newWaypoint.VALUE.TURN_MODE = turn_mode == null ? upload_waypoint.VALUE.TURN_MODE : turn_mode;
-    newWaypoint.VALUE.HAS_ACTION = has_action == null ? upload_waypoint.VALUE.HAS_ACTION : has_action;
-    newWaypoint.VALUE.ACTION_TIME_LIMIT = action_time_limit == null ? upload_waypoint.VALUE.ACTION_TIME_LIMIT : action_time_limit;
+    newWaypoint.VALUE.DAMPING_DIS = damping_dis == null?upload_waypoint.VALUE.DAMPING_DIS:damping_dis;
+    newWaypoint.VALUE.TGT_YAW = tgt_yaw == null? upload_waypoint.VALUE.TGT_YAW : tgt_yaw;
+    newWaypoint.VALUE.TGT_GIMBAL_PITCH = tgt_gimbal_pitch == null? upload_waypoint.VALUE.TGT_GIMBAL_PITCH : tgt_gimbal_pitch;
+    newWaypoint.VALUE.TURN_MODE = turn_mode == null? upload_waypoint.VALUE.TURN_MODE : turn_mode;
+    newWaypoint.VALUE.HAS_ACTION = has_action == null? upload_waypoint.VALUE.HAS_ACTION : has_action;
+    newWaypoint.VALUE.ACTION_TIME_LIMIT = action_time_limit == null? upload_waypoint.VALUE.ACTION_TIME_LIMIT : action_time_limit;
 
-    if (newWaypoint.VALUE.HAS_ACTION != 0) {
+    if(newWaypoint.VALUE.HAS_ACTION != 0) {
         newWaypoint.VALUE.ACTION.ACTION_NUM = action_list.length;
         newWaypoint.VALUE.ACTION.ACTION_RPT = action_rpt;
 
@@ -174,3 +176,4 @@ function updateWPData(seq, index, lati, longi, alti, damping_dis, tgt_yaw, tgt_g
 
     return newWaypoint;
 }
+

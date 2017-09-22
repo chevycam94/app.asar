@@ -1,7 +1,7 @@
 L.GeoIP = L.extend({
 
-    getPosition: function(ip) {
-        try {
+    getPosition: function (ip) {
+        try{
             var url = "http://freegeoip.net/json/";
             var result = L.latLng(0, 0);
 
@@ -13,7 +13,7 @@ L.GeoIP = L.extend({
 
             var xhr = new XMLHttpRequest();
             xhr.open("GET", url, false);
-            xhr.onload = function() {
+            xhr.onload = function () {
                 var status = xhr.status;
                 if (status == 200) {
                     var geoip_response = JSON.parse(xhr.responseText);
@@ -25,12 +25,12 @@ L.GeoIP = L.extend({
             };
             xhr.send();
             return result;
-        } catch (e) {
+        }catch(e){
             console.log(e)
         }
     },
 
-    centerMapOnPosition: function(map, zoom, ip) {
+    centerMapOnPosition: function (map, zoom, ip) {
         var position = L.GeoIP.getPosition(ip);
         map.setView(position, zoom);
     }

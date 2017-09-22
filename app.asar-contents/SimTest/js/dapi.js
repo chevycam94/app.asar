@@ -11,7 +11,7 @@ function PARAM() {
     this.VALUE = 0;
 }
 
-PARAM.prototype.parse = function(p) {
+PARAM.prototype.parse = function (p) {
     if ("DEFAULT" in p) this.DEFAULT = p.DEFAULT;
     if ("MAX" in p) this.MAX = p.MAX;
     if ("MIN" in p) this.MIN = p.MIN;
@@ -33,7 +33,7 @@ function DEVICE() {
     this.commands = [];
 }
 
-DEVICE.prototype.parse = function(data) {
+DEVICE.prototype.parse = function (data) {
     "use strict";
     for (var i = 0; i < this.keys.length; i++) {
         var key = this.keys[i];
@@ -45,7 +45,7 @@ DEVICE.prototype.parse = function(data) {
     return true;
 };
 
-DEVICE.prototype.get_ws_link = function(ws_type) {
+DEVICE.prototype.get_ws_link = function (ws_type) {
     if ("config" in this.conn) {
         var s = this.conn[ws_type];
         if (s instanceof SERVICE)
@@ -54,14 +54,14 @@ DEVICE.prototype.get_ws_link = function(ws_type) {
     return null;
 };
 
-function param_action(dev, action, index, value, on_ok, on_fail) {
+function param_action(dev, action, index, value, on_ok, on_fail){
     if (index in dev.params) {
         var param = dev.params[index];
         var cmd = {};
         cmd.CMD = action;
         cmd.INDEX = index;
         if (action == "write") cmd.VALUE = value;
-        cmd.on_reply = function(msg) {
+        cmd.on_reply = function (msg) {
             var val_new = 0;
             if ("VALUE" in msg) val_new = msg.VALUE;
             if ("ERROR" in msg) {
@@ -81,19 +81,19 @@ function param_action(dev, action, index, value, on_ok, on_fail) {
     }
 }
 
-DEVICE.prototype.param_read = function(index, on_ok, on_fail) {
+DEVICE.prototype.param_read = function (index, on_ok, on_fail) {
     param_action(this, "read", index, 0, on_ok, on_fail);
 };
 
-DEVICE.prototype.param_reset = function(index, on_ok, on_fail) {
+DEVICE.prototype.param_reset = function (index, on_ok, on_fail) {
     param_action(this, "reset", index, 0, on_ok, on_fail);
 };
 
-DEVICE.prototype.param_write = function(index, value, on_ok, on_fail) {
+DEVICE.prototype.param_write = function (index, value, on_ok, on_fail) {
     param_action(this, "write", index, value, on_ok, on_fail);
 };
 
-DEVICE.prototype.on_config_message = function(data) {
+DEVICE.prototype.on_config_message = function (data) {
     //console.log(data);
     var e = JSON.parse(data);
     //console.log(e);
@@ -148,17 +148,17 @@ function ServiceIo(ws_url, on_ws_message, auto_retry, on_ws_failure, on_ws_succe
     var self = this;
 
 
-    var do_connect = function() {
+    var do_connect = function () {
         var service_websocket = new WebSocket(ws_url);
 
-        service_websocket.onopen = function() {
+        service_websocket.onopen = function () {
             console.log(ws_url + " service connect ok!");
             self.cur_ws = this;
             self.cur_status = "link_ok";
             if (is_function(on_ws_success))
                 on_ws_success();
         };
-        service_websocket.onclose = function() {
+        service_websocket.onclose = function () {
             self.cur_ws = null;
             console.log(ws_url + " service closed!");
             self.cur_status = "service_failure";
@@ -167,11 +167,11 @@ function ServiceIo(ws_url, on_ws_message, auto_retry, on_ws_failure, on_ws_succe
             if (is_function(on_ws_failure))
                 on_ws_failure(); // notify no this type of service!
         };
-        service_websocket.onerror = function() {
+        service_websocket.onerror = function () {
             self.cur_ws = null;
             console.log(ws_url + " service error!");
         };
-        service_websocket.onmessage = function(e) {
+        service_websocket.onmessage = function (e) {
             var msg = JSON.parse(e.data);
             if ("SEQ" in msg) { // text with seq
                 if (msg.SEQ in self.cmd_history_) { // seq is send by self.Write
@@ -191,7 +191,7 @@ function ServiceIo(ws_url, on_ws_message, auto_retry, on_ws_failure, on_ws_succe
 
 // cmd object must have a callback function [on_reply] object
 // if no this function object, just log to console
-ServiceIo.prototype.Write = function(cmd) {
+ServiceIo.prototype.Write = function (cmd) {
     var seq = Math.random().toString(36).substring(7); // generate random seq string
     cmd.SEQ = seq; // insert command with seq
     this.cmd_history_[seq] = cmd; // save the send command
@@ -204,7 +204,7 @@ ServiceIo.prototype.Write = function(cmd) {
 function WebServiceGeneral() {
     var self = this;
     this.device_list = {};
-    this.servio = new ServiceIo("ws://localhost:19870/general", function(e) {
+    this.servio = new ServiceIo("ws://localhost:19870/general", function (e) {
         self.on_message(e);
     });
 }
@@ -215,17 +215,16 @@ function InitialService(device, ws_type, on_message) {
     if (device instanceof DEVICE) {
         var ws_url = "ws://localhost:19870/controller/config/user/" + device.FILE;
         var ws_config = new ServiceIo(ws_url,
-            function(e) { // on link message
+            function (e) { // on link message
                 if (is_function(on_message)) on_message(e.data);
             },
             false, // connect only once
-            function() { // on_connect_fail event
+            function () { // on_connect_fail event
                 console.log("device [" + device.FILE + "] doesn't have config service!");
                 console.log(device);
                 if (ws_type in device.conn)
                     delete device.conn[ws_type];
-            },
-            function() { // on open success
+            }, function () { // on open success
                 var s = new SERVICE();
                 s.LINK = ws_config;
                 s.TYPE = ws_type;
@@ -236,7 +235,7 @@ function InitialService(device, ws_type, on_message) {
     }
 }
 
-WebServiceGeneral.prototype.on_message = function(e) {
+WebServiceGeneral.prototype.on_message = function (e) {
     console.log(this);
     var msg = JSON.parse(e.data);
     var device_info = new DEVICE();
@@ -245,7 +244,7 @@ WebServiceGeneral.prototype.on_message = function(e) {
         InitialService(
             device_info,
             "config",
-            function(data) { // config data update
+            function (data) { // config data update
                 device_info.on_config_message(data);
             }
         );
@@ -253,7 +252,7 @@ WebServiceGeneral.prototype.on_message = function(e) {
 };
 
 var web_service_general = null;
-window.onload = function() {
+window.onload = function () {
     "use strict";
     web_service_general = new WebServiceGeneral();
 };
