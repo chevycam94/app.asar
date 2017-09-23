@@ -1,0 +1,82 @@
+.automaitc-testing .at-body .at-body-content {
+    padding-top: 1rem
+}
+.automaitc-testing .at-body .at-body-content .at-body-content-nav {
+    padding: 0 1rem
+}
+.automaitc-testing .at-body .at-body-content .at-body-content-nav .atbcn-list li {
+    float: left
+}
+.automaitc-testing .at-body .at-body-content .at-body-content-nav .atbcn-list li span {
+    padding: .3rem .5rem;
+    font-size: .875rem;
+    cursor: pointer
+}
+.automaitc-testing .at-body .at-body-content .at-body-content-nav .atbcn-list li span:hover {
+    background-color: #ccc
+}
+.automaitc-testing .at-body .at-body-content .at-body-content-nav .atbcn-list li span:active {
+    background-color: #888
+}
+.automaitc-testing .at-body .at-body-content .at-body-content-nav .atbcn-list li.active span {
+    background-color: #ccc;
+    cursor: pointer
+}
+.automaitc-testing .at-body .at-body-content .at-body-content-nav .atbcn-list li:after {
+    content: '|'
+}
+.automaitc-testing .at-body .at-body-content .at-body-content-nav .atbcn-list li:last-child:after {
+    content: ''
+}
+.automaitc-testing .at-body .at-body-content .at-body-content-body {
+    padding-top: 1.5rem
+}
+.automaitc-testing .at-footer-tips {
+    position: fixed;
+    right: 30px;
+    bottom: 20px
+}
+.automaitc-testing .at-header-tips {
+    position: absolute;
+    right: 30px;
+    top: 65px;
+    color: red
+}
+.automaitc-testing form .at-text {
+    line-height: 1.5
+}
+.automaitc-testing form textarea {
+    resize: vertical
+}
+.automaitc-testing form textarea:disabled {
+    background-color: #fff
+}
+.automaitc-testing form input {
+    margin-bottom: 0
+}
+.automaitc-testing form input[type=checkbox] {
+    vertical-align: middle
+}
+.automaitc-testing form input.error {
+    border-color: #f00 !important
+}
+.automaitc-testing form fieldset>.row {
+    margin-bottom: 20px
+}
+.automaitc-testing table {
+    margin-bottom: 0
+}
+.automaitc-testing table tr th,
+.automaitc-testing table tr td {
+    padding: .5rem .625rem
+}
+.automaitc-testing table tr th input,
+.automaitc-testing table tr td input {
+    margin-bottom: 0
+}
+.automaitc-testing [class*="block-grid-"]>li {
+    padding: 0 .625rem
+}
+.automaitc-testing .err {
+    color: red
+}
