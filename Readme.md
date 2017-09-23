@@ -1,4 +1,4 @@
-Included are the app.asar files extracted contents, as well as the actual app.asar file at given milestones. (in a zip for github upload limits)
+Included are the app.asar files extracted contents, as well as the actual app.asar file, usually up to that current commit. (in a zip for github upload limits)
 
 Big thanks to:
 * MAVProxyUser   https://github.com/MAVProxyUser
